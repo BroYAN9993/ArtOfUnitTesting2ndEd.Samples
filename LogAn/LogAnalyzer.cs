@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
+[assembly: InternalsVisibleTo("LogAn.UnitTests")]
 namespace LogAn
 {
     public class LogAnalyzer
     {
-        public bool WasLastFileNameValid;
+        private IExtensionManager manager;
+
+        internal LogAnalyzer()
+        {
+            manager = ExtensionManagerFactory.Create();
+        }
 
         public bool IsValidLogFileName(string fileName)
         {
-            WasLastFileNameValid = false;
-            if (string.IsNullOrEmpty(fileName))
+            try
             {
-                throw new ArgumentException("filename has to be provided");
+                return manager.IsValid(fileName);
             }
-            if (!fileName.EndsWith(".SLF", StringComparison.CurrentCultureIgnoreCase))
+            catch (Exception)
             {
                 return false;
             }
-            WasLastFileNameValid = true;
-            return true;
         }
     }
 }
